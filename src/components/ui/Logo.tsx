@@ -1,62 +1,62 @@
 import Link from "next/link";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { siteConfig } from "@/lib/site-config";
 
 type LogoProps = {
   className?: string;
-  /** Use light text/mark for placement on dark (brand) backgrounds. */
+  /** Use light mark/text for placement on dark (brand) backgrounds. */
   inverted?: boolean;
+  /** Hide the wordmark text and show the mark only. */
+  markOnly?: boolean;
 };
 
 /**
- * Temporary text logo.
- *
- * A simple lettermark emblem + wordmark standing in until the client's
- * real logo is supplied. Swapping in the final asset means replacing
- * only this component — nothing else references the mark directly.
+ * Brand logo — the official American Pride hanger "AP" mark paired with
+ * the company wordmark. The mark is a transparent PNG; on dark surfaces
+ * the `inverted` variant renders it white via a filter. Swapping the
+ * brand asset means replacing /public/images/logo-mark.png only.
  */
-export function Logo({ className, inverted = false }: LogoProps) {
+export function Logo({ className, inverted = false, markOnly = false }: LogoProps) {
   return (
     <Link
       href="/"
       aria-label={`${siteConfig.name} — home`}
-      className={cn(
-        "group inline-flex items-center gap-3",
-        className,
-      )}
+      className={cn("group inline-flex items-center gap-2.5", className)}
     >
-      {/* Lettermark emblem */}
-      <span
+      <Image
+        src="/images/logo-mark.png"
+        alt={markOnly ? siteConfig.name : ""}
+        width={839}
+        height={544}
+        sizes="64px"
+        priority
         className={cn(
-          "flex h-10 w-10 shrink-0 items-center justify-center rounded-btn font-heading text-sm font-bold tracking-tight",
-          inverted
-            ? "bg-white text-brand"
-            : "bg-brand text-white",
+          "h-10 w-auto shrink-0",
+          inverted && "brightness-0 invert",
         )}
-        aria-hidden
-      >
-        AP
-      </span>
+      />
 
-      {/* Wordmark */}
-      <span className="flex flex-col leading-none">
-        <span
-          className={cn(
-            "font-heading text-lg font-bold tracking-tight",
-            inverted ? "text-white" : "text-ink",
-          )}
-        >
-          American Pride
+      {!markOnly && (
+        <span className="flex flex-col leading-none">
+          <span
+            className={cn(
+              "font-heading text-lg font-bold tracking-tight",
+              inverted ? "text-white" : "text-ink",
+            )}
+          >
+            American Pride
+          </span>
+          <span
+            className={cn(
+              "text-[0.7rem] font-semibold tracking-[0.22em] uppercase",
+              inverted ? "text-navy-200" : "text-muted",
+            )}
+          >
+            Wholesale Supply
+          </span>
         </span>
-        <span
-          className={cn(
-            "text-[0.7rem] font-semibold tracking-[0.22em] uppercase",
-            inverted ? "text-navy-200" : "text-muted",
-          )}
-        >
-          Wholesale Supply
-        </span>
-      </span>
+      )}
     </Link>
   );
 }
