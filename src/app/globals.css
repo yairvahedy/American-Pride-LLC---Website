@@ -1,26 +1,146 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+  ============================================================
+  American Pride LLC — Global Design System
+  ------------------------------------------------------------
+  Single source of truth for brand tokens. Every color, font,
+  radius, shadow and spacing value used across the site is
+  declared here and consumed through Tailwind utilities
+  (e.g. `bg-brand`, `text-ink`, `shadow-card`, `rounded-card`).
+
+  Direction: Industrial Navy — deep navy primary, steel/slate
+  neutrals, generous white space, a single restrained warm
+  accent. No dark mode. No gradients. Traditional + premium.
+  ============================================================
+*/
+
+@theme {
+  /* ---------- Brand: Navy scale ---------- */
+  --color-navy-50: #eef3f9;
+  --color-navy-100: #d6e2f0;
+  --color-navy-200: #adc4e0;
+  --color-navy-300: #7ea0cb;
+  --color-navy-400: #4f79b0;
+  --color-navy-500: #2f5a92;
+  --color-navy-600: #234873;
+  --color-navy-700: #1a3a5f;
+  --color-navy-800: #12335c;
+  --color-navy-900: #0d2340;
+  --color-navy-950: #081627;
+
+  /* ---------- Neutrals: Steel / Slate ---------- */
+  --color-steel-50: #f8fafc;
+  --color-steel-100: #f1f5f9;
+  --color-steel-200: #e6ebf1;
+  --color-steel-300: #cfd8e3;
+  --color-steel-400: #9aa8ba;
+  --color-steel-500: #6b7c92;
+  --color-steel-600: #4f5f74;
+  --color-steel-700: #3a4757;
+  --color-steel-800: #26303c;
+  --color-steel-900: #161e28;
+
+  /* ---------- Accent: restrained warm brass/amber ---------- */
+  --color-accent-50: #fbf4e7;
+  --color-accent-100: #f5e2bf;
+  --color-accent-200: #e9c583;
+  --color-accent-300: #d9a648;
+  --color-accent-400: #c68a26;
+  --color-accent-500: #b0761a;
+  --color-accent-600: #925f13;
+  --color-accent-700: #74490f;
+
+  /* ---------- Semantic aliases ---------- */
+  --color-brand: var(--color-navy-800);
+  --color-brand-dark: var(--color-navy-900);
+  --color-brand-light: var(--color-navy-600);
+  --color-accent: var(--color-accent-400);
+  --color-accent-strong: var(--color-accent-500);
+
+  /* Bright azure used on the hero banner for highlighted words and the
+     primary hero button — matches the client-supplied hero artwork. */
+  --color-hero-blue: #2f74e0;
+  --color-hero-blue-hover: #2461c4;
+
+  --color-ink: #10202f;          /* primary headings text */
+  --color-body: #45566a;         /* body copy */
+  --color-muted: #6b7c92;        /* secondary / captions */
+  --color-line: #e6ebf1;         /* borders / hairlines */
+  --color-surface: #ffffff;      /* base page surface */
+  --color-surface-muted: #f6f8fb;/* alternating section bg */
+  --color-surface-sunken: #eef2f7;
+
+  --color-background: #ffffff;
+  --color-foreground: var(--color-ink);
+
+  /* ---------- Typography ---------- */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-heading: var(--font-archivo), var(--font-inter), ui-sans-serif,
+    system-ui, sans-serif;
+
+  /* ---------- Radius ---------- */
+  --radius-card: 0.625rem;   /* 10px — modest, traditional */
+  --radius-btn: 0.5rem;      /* 8px */
+  --radius-badge: 9999px;
+
+  /* ---------- Shadows: soft, understated ---------- */
+  --shadow-card: 0 1px 2px rgba(13, 35, 64, 0.04),
+    0 1px 3px rgba(13, 35, 64, 0.06);
+  --shadow-card-hover: 0 6px 16px rgba(13, 35, 64, 0.09),
+    0 2px 6px rgba(13, 35, 64, 0.06);
+  --shadow-header: 0 1px 0 rgba(13, 35, 64, 0.06),
+    0 4px 16px rgba(13, 35, 64, 0.05);
+
+  /* ---------- Layout ---------- */
+  --spacing-container: 80rem; /* 1280px content max-width */
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/*
+  Base element styling. Kept intentionally light — components
+  own their look; this only sets sensible document defaults.
+*/
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
   }
-}
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  body {
+    background-color: var(--color-surface);
+    color: var(--color-body);
+    font-family: var(--font-sans);
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    color: var(--color-ink);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  a {
+    color: inherit;
+  }
+
+  ::selection {
+    background-color: var(--color-navy-800);
+    color: #ffffff;
+  }
+
+  /* Consistent, accessible focus treatment across the site. */
+  :focus-visible {
+    outline: 2px solid var(--color-navy-600);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
 }
