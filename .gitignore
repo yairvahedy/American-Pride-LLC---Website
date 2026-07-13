@@ -42,3 +42,6 @@ next-env.d.ts
 
 # local dev artifacts
 /dev-screenshot*.png
+
+# blender auto-backup files (keep .blend source, ignore backups)
+*.blend[0-9]
