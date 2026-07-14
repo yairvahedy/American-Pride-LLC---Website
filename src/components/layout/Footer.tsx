@@ -27,11 +27,11 @@ export function Footer() {
               className="inline-block"
             >
               <Image
-                src="/images/logo-full.png"
+                src="/images/logo-full-white.png"
                 alt={siteConfig.name}
                 width={1140}
                 height={673}
-                className="h-20 w-auto brightness-0 invert"
+                className="h-20 w-auto"
               />
             </Link>
             <p className="mt-5 max-w-xs text-sm leading-relaxed text-navy-200">

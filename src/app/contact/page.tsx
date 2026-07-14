@@ -3,6 +3,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { Section } from "@/components/ui/Section";
 import { Card } from "@/components/ui/Card";
 import { Placeholder } from "@/components/ui/Placeholder";
+import { MapCard } from "@/components/contact/MapCard";
 import { PhoneIcon, WhatsAppIcon, MailIcon, MapPinIcon } from "@/components/icons";
 import { siteConfig } from "@/lib/site-config";
 
@@ -104,13 +105,9 @@ export default function ContactPage() {
               </a>
             </div>
 
-            {/* Reserved region: embedded map (added with real assets later) */}
+            {/* Stylized map — links out to Google Maps */}
             <div className="mt-6">
-              <Placeholder
-                ratio="16/9"
-                label="Map — 6420 S Alameda St, Huntington Park, CA"
-                className="w-full"
-              />
+              <MapCard />
             </div>
 
             <div className="mt-8">
