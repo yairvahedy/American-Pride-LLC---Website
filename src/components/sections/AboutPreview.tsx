@@ -1,7 +1,7 @@
+import Image from "next/image";
 import { Section } from "@/components/ui/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Button } from "@/components/ui/Button";
-import { Placeholder } from "@/components/ui/Placeholder";
 import { ArrowRightIcon } from "@/components/icons";
 
 const points = [
@@ -21,11 +21,15 @@ export function AboutPreview() {
       <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
         {/* Visual */}
         <div className="order-1 lg:order-none">
-          <Placeholder
-            ratio="4/3"
-            label="About — team / facility photo"
-            className="w-full"
-          />
+          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-card border border-line shadow-card">
+            <Image
+              src="/images/about-facility.jpg"
+              alt="Inside the American Pride warehouse — racks of hangers, poly bags, chemicals and pallets of dry cleaning and laundry supplies"
+              fill
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              className="object-cover"
+            />
+          </div>
         </div>
 
         {/* Copy */}
