@@ -37,7 +37,7 @@ export const industries: Industry[] = [
     description:
       "Reliable, repeatable ordering for uniform rental and service programs.",
     image: {
-      src: "/images/industry-uniform-companies.jpg",
+      src: "/images/industry-uniform-companies-v2.jpg",
       alt: "Uniform warehouse with racks of work shirts and folded uniforms sorted by size",
     },
   },
@@ -46,7 +46,7 @@ export const industries: Industry[] = [
     description:
       "Everything laundromats and laundry services need, in stock and ready to ship.",
     image: {
-      src: "/images/industry-laundry-businesses.jpg",
+      src: "/images/industry-laundry-businesses-v2.jpg",
       alt: "Clean, modern laundromat with rows of washers, folding tables and clean linen carts",
     },
   },
