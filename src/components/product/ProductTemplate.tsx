@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Section } from "@/components/ui/Section";
 import { AvailabilityBadge } from "@/components/catalog/AvailabilityBadge";
-import { Badge } from "@/components/ui/Badge";
 import { ProductGallery } from "./ProductGallery";
 import { ColorSelector } from "./ColorSelector";
 import { ProductQuoteControl } from "./ProductQuoteControl";
@@ -45,11 +44,7 @@ export function ProductTemplate({ product }: { product: Product }) {
       {/* Top: gallery + info */}
       <Section spacing="md">
         <div className="grid gap-10 lg:grid-cols-2 lg:gap-14">
-          <ProductGallery
-            images={product.images}
-            model3d={product.model3d}
-            name={product.name}
-          />
+          <ProductGallery images={product.images} name={product.name} />
 
           <div>
             {category && (
@@ -69,7 +64,6 @@ export function ProductTemplate({ product }: { product: Product }) {
                 SKU: {product.sku}
               </span>
               <AvailabilityBadge availability={product.availability} />
-              {product.placeholder && <Badge tone="muted">Sample layout</Badge>}
             </div>
 
             {product.shortDescription && (

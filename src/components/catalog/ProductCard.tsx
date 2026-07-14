@@ -2,7 +2,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { Placeholder } from "@/components/ui/Placeholder";
 import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
 import { AvailabilityBadge } from "./AvailabilityBadge";
 import { QuoteButton } from "./QuoteButton";
 import { ArrowRightIcon } from "@/components/icons";
@@ -31,30 +30,23 @@ export function ProductCard({ product }: { product: Product }) {
   const image = product.images?.[0];
 
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-card border border-line bg-surface shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:border-steel-300 hover:shadow-card-hover">
+    <article className="group relative flex h-full flex-col overflow-hidden rounded-card border border-line bg-surface shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:border-steel-300 hover:shadow-card-hover">
       {/* Media */}
       <div className="relative">
-        <Link href={href} aria-label={product.name} className="block">
-          {image?.src ? (
-            <Image
-              src={image.src}
-              alt={image.alt}
-              width={600}
-              height={450}
-              className="aspect-[4/3] w-full object-cover"
-            />
-          ) : (
-            <Placeholder ratio="4/3" rounded="none" label="Product image" />
-          )}
-        </Link>
+        {image?.src ? (
+          <Image
+            src={image.src}
+            alt={image.alt}
+            width={600}
+            height={450}
+            className="aspect-[4/3] w-full object-cover"
+          />
+        ) : (
+          <Placeholder ratio="4/3" rounded="none" label="Product image" />
+        )}
 
         <div className="pointer-events-none absolute inset-x-3 top-3 flex items-start justify-between gap-2">
           <AvailabilityBadge availability={product.availability} />
-          {product.placeholder && (
-            <Badge tone="muted" className="bg-white/90">
-              Sample
-            </Badge>
-          )}
         </div>
       </div>
 
@@ -64,7 +56,12 @@ export function ProductCard({ product }: { product: Product }) {
           SKU: {product.sku}
         </p>
         <h3 className="mt-1 text-base font-bold text-ink">
-          <Link href={href} className="transition-colors hover:text-brand">
+          {/* Stretched link — makes the whole card clickable while the
+              buttons below (z-10) stay independently interactive. */}
+          <Link
+            href={href}
+            className="rounded-sm transition-colors after:absolute after:inset-0 group-hover:text-brand"
+          >
             {product.name}
           </Link>
         </h3>
@@ -79,7 +76,7 @@ export function ProductCard({ product }: { product: Product }) {
         </p>
 
         {/* Actions */}
-        <div className="mt-4 flex flex-col gap-2">
+        <div className="relative z-10 mt-4 flex flex-col gap-2">
           <QuoteButton product={product} size="sm" fullWidth />
           <Button href={href} variant="ghost" size="sm" fullWidth>
             View Details
