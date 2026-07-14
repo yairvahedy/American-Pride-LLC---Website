@@ -4,6 +4,8 @@ import "./globals.css";
 import { siteConfig } from "@/lib/site-config";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { QuoteProvider } from "@/context/QuoteContext";
+import { QuoteIndicator } from "@/components/quote/QuoteIndicator";
 
 /* Body typeface — highly legible neutral grotesque. */
 const inter = Inter({
@@ -56,9 +58,12 @@ export default function RootLayout({
       className={`${inter.variable} ${archivo.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-surface">
-        <Navbar />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        <QuoteProvider>
+          <Navbar />
+          <main className="flex-1">{children}</main>
+          <Footer />
+          <QuoteIndicator />
+        </QuoteProvider>
       </body>
     </html>
   );

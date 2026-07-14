@@ -59,13 +59,13 @@ const SHOW_BRANDMARK = false;
 
 /** Left-hand product list. Each links to its category page. */
 const PRODUCT_LINKS: { label: string; href: string; icon: Icon }[] = [
-  { label: "Hangers and Covers", href: "/products/hangers-covers", icon: HangerIcon },
-  { label: "Poly Bags and Films", href: "/products/poly-bags-films", icon: BagIcon },
-  { label: "Detergents and Starches", href: "/products/detergents-starches", icon: BottleIcon },
-  { label: "Chemicals and Solvents", href: "/products/chemicals-solvents", icon: FlaskIcon },
-  { label: "Spotting and Wet Cleaning", href: "/products/spotting-wet-cleaning", icon: SprayIcon },
-  { label: "Pressing and Finishing", href: "/products/pressing-finishing", icon: IronIcon },
-  { label: "Counter and Packaging Supplies", href: "/products/counter-packaging", icon: BoxIcon },
+  { label: "Hangers & Covers", href: "/products/hangers-covers", icon: HangerIcon },
+  { label: "Poly Bags & Film", href: "/products/poly-bags-film", icon: BagIcon },
+  { label: "Chemicals", href: "/products/chemicals", icon: FlaskIcon },
+  { label: "Detergents", href: "/products/detergents", icon: BottleIcon },
+  { label: "Spotting Supplies", href: "/products/spotting-supplies", icon: SprayIcon },
+  { label: "Pressing Supplies", href: "/products/pressing-supplies", icon: IronIcon },
+  { label: "Counter & Packaging Supplies", href: "/products/counter-packaging", icon: BoxIcon },
 ];
 
 /** Trust bar shown directly below the hero photograph. */

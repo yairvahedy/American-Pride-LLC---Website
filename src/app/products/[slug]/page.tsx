@@ -1,22 +1,19 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { PageHeader } from "@/components/ui/PageHeader";
+import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
-import { Placeholder } from "@/components/ui/Placeholder";
-import { Button } from "@/components/ui/Button";
-import { ArrowRightIcon, WhatsAppIcon } from "@/components/icons";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
+import { CategoryHero } from "@/components/catalog/CategoryHero";
+import { FilterSidebar } from "@/components/catalog/FilterSidebar";
+import { CatalogBrowser } from "@/components/catalog/CatalogBrowser";
 import {
   getCategoryBySlug,
+  getCategoryProducts,
   productCategories,
 } from "@/lib/products";
-import { siteConfig } from "@/lib/site-config";
 
-type CategoryPageProps = {
-  params: Promise<{ slug: string }>;
-};
+type CategoryPageProps = { params: Promise<{ slug: string }> };
 
-/** Pre-render a static page for every known category. */
 export function generateStaticParams() {
   return productCategories.map((category) => ({ slug: category.slug }));
 }
@@ -27,105 +24,48 @@ export async function generateMetadata({
   const { slug } = await params;
   const category = getCategoryBySlug(slug);
   if (!category) return { title: "Product Category" };
-  return {
-    title: category.name,
-    description: category.description,
-  };
+  return { title: category.name, description: category.description };
 }
 
 /**
- * Individual product-category page.
- *
- * This is the architectural stub for future product pages. The layout
- * already reserves space for the pieces that will land later — a hero
- * image, a product grid, specs, color options, pricing and quote
- * requests — so building those features means filling these regions in,
- * not restructuring the route.
+ * Category page. Breadcrumbs → hero banner → filter sidebar + searchable,
+ * paginated product grid. Renders placeholder products until real data is
+ * added; empty states appear when a search returns nothing.
  */
 export default async function CategoryPage({ params }: CategoryPageProps) {
   const { slug } = await params;
   const category = getCategoryBySlug(slug);
+  if (!category) notFound();
 
-  if (!category) {
-    notFound();
-  }
+  const products = getCategoryProducts(slug);
 
   return (
     <>
-      <PageHeader
-        eyebrow="Product Category"
-        title={category.name}
-        description={category.description}
-      />
+      <div className="border-b border-line bg-surface">
+        <Container className="py-3">
+          <Breadcrumbs
+            items={[
+              { label: "Home", href: "/" },
+              { label: "Products", href: "/products" },
+              { label: category.name },
+            ]}
+          />
+        </Container>
+      </div>
+
+      <CategoryHero category={category} productCount={products.length} />
 
       <Section spacing="lg">
-        {/* Reserved region: category hero image */}
-        <Placeholder
-          ratio="21/9"
-          label={`${category.name} — category image`}
-          className="w-full"
-        />
-
-        {/* Reserved region: product grid (individual product cards) */}
-        <div className="mt-12">
-          <h2 className="text-2xl">Products</h2>
-          <p className="mt-2 max-w-2xl text-body">
-            Detailed product listings for this category — with multiple
-            photos, color options, specifications, pricing and wholesale
-            quote requests — are being added. In the meantime, contact us for
-            full availability and pricing.
-          </p>
-
-          <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div
-                key={i}
-                className="overflow-hidden rounded-card border border-line bg-surface shadow-card"
-              >
-                <Placeholder ratio="1/1" rounded="none" label="Product photo" />
-                <div className="space-y-2 p-5">
-                  <div className="h-4 w-2/3 rounded bg-steel-100" />
-                  <div className="h-3 w-full rounded bg-steel-100" />
-                  <div className="h-3 w-4/5 rounded bg-steel-100" />
-                </div>
-              </div>
-            ))}
+        <div className="grid gap-8 lg:grid-cols-[16rem_1fr] lg:gap-10">
+          <div className="lg:sticky lg:top-24 lg:self-start">
+            <FilterSidebar currentCategorySlug={slug} />
           </div>
-        </div>
-
-        {/* Quote CTA */}
-        <div className="mt-14 flex flex-col items-start justify-between gap-6 rounded-card border border-line bg-surface-muted p-8 sm:flex-row sm:items-center">
           <div>
-            <h3 className="text-xl">Need pricing on {category.name}?</h3>
-            <p className="mt-1.5 text-body">
-              Call or WhatsApp {siteConfig.contact.phone.display}, or request a
-              wholesale quote.
-            </p>
+            <CatalogBrowser
+              products={products}
+              searchPlaceholder={`Search ${category.name}…`}
+            />
           </div>
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <Button href="/contact" variant="primary">
-              Request a Quote
-              <ArrowRightIcon className="h-5 w-5" />
-            </Button>
-            <Button
-              href={siteConfig.contact.whatsapp.href}
-              variant="outline"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <WhatsAppIcon className="h-5 w-5" />
-              WhatsApp
-            </Button>
-          </div>
-        </div>
-
-        <div className="mt-8">
-          <Link
-            href="/products"
-            className="text-sm font-semibold text-brand hover:text-accent-600"
-          >
-            ← Back to all products
-          </Link>
         </div>
       </Section>
     </>

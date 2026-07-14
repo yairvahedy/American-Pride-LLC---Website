@@ -1,110 +1,124 @@
 /**
  * Product & category data layer.
  *
- * This is the architectural backbone for all future product pages.
- * The TYPES below intentionally describe the full end-state feature
- * set (multiple photos, color options, specifications, pricing,
- * wholesale quotes, PDF downloads, a 3D model) so that pages and
- * components can be built against a stable shape. Today we only
- * populate category-level placeholder data; individual products,
- * images and pricing are filled in later without restructuring.
+ * The single source of truth for the catalog. Types describe the full
+ * end-state feature set (multiple photos, colors, specs, dimensions,
+ * packaging, pricing, quotes, PDF downloads, a 3D model, related items)
+ * so every component can be built against a stable shape.
  *
- * Nothing here renders UI — it is pure data + types.
+ * There are NO real products yet. `products` is intentionally empty.
+ * To let the browsing experience be built and demonstrated, a
+ * deterministic set of clearly-generic PLACEHOLDER products is generated
+ * per category (no invented names, prices, or specs). When real data is
+ * added to `products`, it automatically takes over — see
+ * `getCategoryProducts`.
+ *
+ * Nothing here renders UI — pure data + types.
  */
 
 /* ------------------------------------------------------------------ */
-/* Shared / future-facing product types                                */
+/* Types                                                               */
 /* ------------------------------------------------------------------ */
 
-/** A single product image. `src` stays optional until real photography
- *  is supplied, letting the UI fall back to a placeholder. */
 export type ProductImage = {
+  /** Optional until real photography is supplied (UI falls back to a placeholder). */
   src?: string;
   alt: string;
 };
 
-/** A selectable color / finish option for a product. */
 export type ProductColor = {
   name: string;
-  /** CSS color used for the swatch (hex, rgb, etc.). */
+  /** CSS color for the swatch. */
   swatch: string;
-  /** Optional per-color imagery, shown when the color is selected. */
   images?: ProductImage[];
 };
 
-/** One row in a product specification table. */
 export type ProductSpec = {
   label: string;
   value: string;
 };
 
-/** Wholesale pricing. Left flexible: unit price, per-case, or
- *  quote-only are all representable. Populated later. */
 export type ProductPricing = {
   /** e.g. "case", "box", "each", "roll". */
   unit: string;
   /** Numeric price in USD; omit for quote-only items. */
   price?: number;
-  /** Minimum order quantity, if any. */
   minimumOrderQuantity?: number;
-  /** When true, the UI surfaces a "Request a quote" flow instead of a price. */
+  /** Surface a "Request a quote" flow instead of a price. */
   quoteOnly?: boolean;
 };
 
-/** A downloadable document (spec sheet, SDS, catalog page). */
 export type ProductDocument = {
   label: string;
   href: string;
   kind?: "pdf" | "doc" | "other";
 };
 
-/** A future 3D model reference for the interactive viewer. */
 export type ProductModel3D = {
   /** Path to a .glb/.gltf asset. */
   src: string;
   poster?: string;
 };
 
+/** Stock status. Drives the availability badge + quote messaging. */
+export type Availability =
+  | "in-stock"
+  | "low-stock"
+  | "made-to-order"
+  | "out-of-stock";
+
+export const availabilityMeta: Record<
+  Availability,
+  { label: string; tone: "success" | "warning" | "info" | "muted" }
+> = {
+  "in-stock": { label: "In Stock", tone: "success" },
+  "low-stock": { label: "Low Stock", tone: "warning" },
+  "made-to-order": { label: "Made to Order", tone: "info" },
+  "out-of-stock": { label: "Out of Stock", tone: "muted" },
+};
+
 /**
- * A single product. Every field beyond identity is optional so the
- * catalog can grow incrementally — a product can exist with just a
- * name and slug and be enriched over time.
+ * A single product. Only identity fields are required; everything else
+ * is optional so products can be enriched incrementally.
  */
 export type Product = {
   slug: string;
   name: string;
+  sku: string;
   categorySlug: string;
   shortDescription?: string;
   description?: string;
   images?: ProductImage[];
   colors?: ProductColor[];
   specs?: ProductSpec[];
+  dimensions?: string;
+  material?: string;
+  packaging?: string;
   pricing?: ProductPricing;
+  availability?: Availability;
   documents?: ProductDocument[];
   model3d?: ProductModel3D;
-  /** Marketing flags used for badges / sorting. */
+  /** Free-text search terms (name/sku are always searched too). */
+  keywords?: string[];
+  relatedSlugs?: string[];
   featured?: boolean;
-  tags?: string[];
+  /** True for generated demo entries so the UI can flag them if needed. */
+  placeholder?: boolean;
 };
 
-/**
- * A product category. Categories are the primary browse unit and the
- * only thing rendered today (as placeholder cards). `productCount` is
- * a display hint shown on cards; real products get linked in later.
- */
 export type ProductCategory = {
   slug: string;
   name: string;
+  /** Short line used on cards. */
   description: string;
-  /** Optional hero/card image; falls back to a placeholder until set. */
+  /** Longer paragraph used on the category hero. */
+  intro?: string;
   image?: ProductImage;
-  /** Approximate count surfaced on the category card ("120+ products"). */
-  productCount?: number;
   featured?: boolean;
 };
 
 /* ------------------------------------------------------------------ */
-/* Category data (placeholders — refine names/counts with client)      */
+/* Categories                                                          */
 /* ------------------------------------------------------------------ */
 
 export const productCategories: ProductCategory[] = [
@@ -112,77 +126,226 @@ export const productCategories: ProductCategory[] = [
     slug: "hangers-covers",
     name: "Hangers & Covers",
     description:
-      "Wire, plastic and specialty hangers, plus garment covers to protect finished orders.",
-    productCount: 40,
+      "Wire, plastic and specialty hangers plus garment covers to protect finished orders.",
+    intro:
+      "Everything you need to hang, shape and protect finished garments — from everyday wire and plastic hangers to specialty styles and poly garment covers.",
     featured: true,
   },
   {
-    slug: "poly-bags-films",
-    name: "Poly Bags & Films",
+    slug: "poly-bags-film",
+    name: "Poly Bags & Film",
     description:
-      "Garment poly bags, laundry wrap, liners and roll films in a full range of sizes.",
-    productCount: 30,
+      "Garment poly bags, laundry wrap, liners and roll film in a full range of sizes.",
+    intro:
+      "Protective poly for every stage of the order — garment bags, laundry wrap, can liners and roll film in the sizes and gauges your operation runs through.",
     featured: true,
   },
   {
-    slug: "detergents-starches",
-    name: "Detergents & Starches",
+    slug: "chemicals",
+    name: "Chemicals",
     description:
-      "Professional detergents, starches and sizing formulated for high-volume cleaning.",
-    productCount: 35,
+      "Dry cleaning solvents, additives and professional cleaning chemistry.",
+    intro:
+      "Solvents, detergents-boosters, additives and cleaning chemistry from trusted manufacturers, built for professional dry cleaning and laundry.",
     featured: true,
   },
   {
-    slug: "chemicals-solvents",
-    name: "Chemicals & Solvents",
+    slug: "detergents",
+    name: "Detergents",
     description:
-      "Dry cleaning solvents, additives and cleaning chemistry from trusted manufacturers.",
-    productCount: 28,
+      "Detergents, starches and sizing formulated for high-volume cleaning.",
+    intro:
+      "Professional-grade detergents, starches and sizing formulated to deliver consistent results at high volume.",
     featured: true,
   },
   {
-    slug: "spotting-wet-cleaning",
-    name: "Spotting & Wet Cleaning",
+    slug: "spotting-supplies",
+    name: "Spotting Supplies",
     description:
-      "Spotting agents, stain removers and wet cleaning systems for tough soils.",
-    productCount: 24,
+      "Spotting agents and stain removers for tackling the toughest soils.",
+    intro:
+      "A complete spotting board — pre-spotters, tannin and protein formulas, rust removers and the tools to work them, for the stains that need a specialist.",
     featured: true,
   },
   {
-    slug: "pressing-finishing",
-    name: "Pressing & Finishing",
+    slug: "pressing-supplies",
+    name: "Pressing Supplies",
     description:
-      "Pads, covers, pressing supplies and finishing equipment consumables.",
-    productCount: 22,
+      "Pads, covers and finishing consumables that keep your equipment running.",
+    intro:
+      "Press pads, covers, spray heads and finishing consumables to keep your pressing and finishing equipment producing crisp, clean results.",
     featured: true,
   },
   {
     slug: "counter-packaging",
     name: "Counter & Packaging Supplies",
     description:
-      "Tags, tickets, invoices, safety pins and front-counter essentials.",
-    productCount: 45,
-  },
-  {
-    slug: "paper-products",
-    name: "Paper Products",
-    description:
-      "Tissue, banding paper, box board and protective paper packaging.",
-    productCount: 18,
+      "Tags, tickets, invoices, safety pins and front-counter packaging essentials.",
+    intro:
+      "The front-counter essentials that keep orders moving — tags, tickets, invoices, safety pins, staples and packaging supplies.",
   },
 ];
+
+/* ------------------------------------------------------------------ */
+/* Products (real data goes here — empty until the client supplies it) */
+/* ------------------------------------------------------------------ */
+
+export const products: Product[] = [];
+
+/* ------------------------------------------------------------------ */
+/* Placeholder generation (demo only — deterministic, SSR-safe)        */
+/* ------------------------------------------------------------------ */
+
+/** How many demo cards each category shows until real products exist. */
+export const PLACEHOLDERS_PER_CATEGORY = 12;
+
+const CATEGORY_PREFIX: Record<string, string> = {
+  "hangers-covers": "HC",
+  "poly-bags-film": "PB",
+  chemicals: "CH",
+  detergents: "DT",
+  "spotting-supplies": "SP",
+  "pressing-supplies": "PR",
+  "counter-packaging": "CP",
+};
+
+// Cycled so the demo grid shows a realistic mix of states (no randomness).
+const AVAILABILITY_CYCLE: Availability[] = [
+  "in-stock",
+  "in-stock",
+  "low-stock",
+  "made-to-order",
+  "in-stock",
+  "out-of-stock",
+  "in-stock",
+  "low-stock",
+];
+
+/** Build deterministic placeholder products for a category. */
+export function getPlaceholderProducts(categorySlug: string): Product[] {
+  const category = getCategoryBySlug(categorySlug);
+  if (!category) return [];
+  const prefix = CATEGORY_PREFIX[categorySlug] ?? "AP";
+
+  return Array.from({ length: PLACEHOLDERS_PER_CATEGORY }, (_, i) => {
+    const n = i + 1;
+    const id = String(n).padStart(3, "0");
+    return {
+      slug: `${categorySlug}-sample-${n}`,
+      name: "Product Name",
+      sku: `AP-${prefix}-${id}`,
+      categorySlug,
+      shortDescription:
+        "Short product description will appear here once catalog data is added.",
+      availability: AVAILABILITY_CYCLE[i % AVAILABILITY_CYCLE.length],
+      pricing: { unit: "case", quoteOnly: true },
+      keywords: [category.name],
+      placeholder: true,
+    } satisfies Product;
+  });
+}
 
 /* ------------------------------------------------------------------ */
 /* Lookups                                                             */
 /* ------------------------------------------------------------------ */
 
-/** Categories highlighted on the homepage grid. */
 export function getFeaturedCategories(): ProductCategory[] {
   return productCategories.filter((c) => c.featured);
 }
 
-export function getCategoryBySlug(
-  slug: string,
-): ProductCategory | undefined {
+export function getCategoryBySlug(slug: string): ProductCategory | undefined {
   return productCategories.find((c) => c.slug === slug);
+}
+
+/**
+ * Products for a category. Returns real products when they exist,
+ * otherwise the deterministic placeholder set so the UI is populated.
+ */
+export function getCategoryProducts(categorySlug: string): Product[] {
+  const real = products.filter((p) => p.categorySlug === categorySlug);
+  return real.length > 0 ? real : getPlaceholderProducts(categorySlug);
+}
+
+/** Every product across the catalog (real, or placeholders while empty). */
+export function getAllProducts(): Product[] {
+  if (products.length > 0) return products;
+  return productCategories.flatMap((c) => getPlaceholderProducts(c.slug));
+}
+
+export function getProductBySlug(productSlug: string): Product | undefined {
+  const real = products.find((p) => p.slug === productSlug);
+  if (real) return real;
+  // Placeholder slugs encode their category: "<categorySlug>-sample-<n>".
+  const match = productSlug.match(/^(.*)-sample-\d+$/);
+  if (match) {
+    return getPlaceholderProducts(match[1]).find((p) => p.slug === productSlug);
+  }
+  return undefined;
+}
+
+export function getRelatedProducts(product: Product, limit = 4): Product[] {
+  if (product.relatedSlugs?.length) {
+    return product.relatedSlugs
+      .map((s) => getProductBySlug(s))
+      .filter((p): p is Product => Boolean(p))
+      .slice(0, limit);
+  }
+  return getCategoryProducts(product.categorySlug)
+    .filter((p) => p.slug !== product.slug)
+    .slice(0, limit);
+}
+
+/* ------------------------------------------------------------------ */
+/* Search + filtering                                                  */
+/* ------------------------------------------------------------------ */
+
+export type ProductFilters = {
+  query?: string;
+  categorySlug?: string;
+  material?: string;
+  color?: string;
+  availability?: Availability;
+};
+
+/**
+ * Reusable search/filter over a product list. Matches the query against
+ * name, SKU, keywords and category name. Category is active now; the
+ * material/color/availability facets are wired here and activate as soon
+ * as product data carries those fields.
+ */
+export function filterProducts(
+  list: Product[],
+  filters: ProductFilters,
+): Product[] {
+  const q = filters.query?.trim().toLowerCase();
+  return list.filter((p) => {
+    if (filters.categorySlug && p.categorySlug !== filters.categorySlug) {
+      return false;
+    }
+    if (filters.availability && p.availability !== filters.availability) {
+      return false;
+    }
+    if (filters.material && p.material !== filters.material) return false;
+    if (filters.color && !p.colors?.some((c) => c.name === filters.color)) {
+      return false;
+    }
+    if (q) {
+      const categoryName = getCategoryBySlug(p.categorySlug)?.name ?? "";
+      const haystack = [
+        p.name,
+        p.sku,
+        categoryName,
+        ...(p.keywords ?? []),
+      ]
+        .join(" ")
+        .toLowerCase();
+      if (!haystack.includes(q)) return false;
+    }
+    return true;
+  });
+}
+
+/** Convenience: search the whole catalog. */
+export function searchProducts(filters: ProductFilters): Product[] {
+  return filterProducts(getAllProducts(), filters);
 }

@@ -29,11 +29,6 @@ export function CategoryCard({ category }: CategoryCardProps) {
           label={category.name}
           className="border-0 border-b border-line"
         />
-        {typeof category.productCount === "number" && (
-          <span className="absolute top-3 right-3 rounded-badge bg-white/95 px-2.5 py-1 text-xs font-semibold text-brand shadow-card">
-            {category.productCount}+ products
-          </span>
-        )}
       </div>
 
       {/* Body */}
