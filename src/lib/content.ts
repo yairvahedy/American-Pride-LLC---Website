@@ -9,6 +9,7 @@
 export type Industry = {
   name: string;
   description: string;
+  image?: { src: string; alt: string };
 };
 
 /** Primary customer segments the company serves. */
@@ -17,21 +18,37 @@ export const industries: Industry[] = [
     name: "Dry Cleaning Stores",
     description:
       "Everyday supplies and chemistry that keep retail dry cleaners running.",
+    image: {
+      src: "/images/industry-dry-cleaning-stores.jpg",
+      alt: "Interior of a modern dry cleaning store with garments in poly covers and a service counter",
+    },
   },
   {
     name: "Commercial Laundries",
     description:
       "High-volume consumables and equipment supplies for large-scale operations.",
+    image: {
+      src: "/images/industry-commercial-laundries.jpg",
+      alt: "Industrial commercial laundry facility with large washers, linen carts and folded linens",
+    },
   },
   {
     name: "Uniform Companies",
     description:
       "Reliable, repeatable ordering for uniform rental and service programs.",
+    image: {
+      src: "/images/industry-uniform-companies.jpg",
+      alt: "Uniform warehouse with racks of work shirts and folded uniforms sorted by size",
+    },
   },
   {
     name: "Laundry Businesses",
     description:
       "Everything laundromats and laundry services need, in stock and ready to ship.",
+    image: {
+      src: "/images/industry-laundry-businesses.jpg",
+      alt: "Clean, modern laundromat with rows of washers, folding tables and clean linen carts",
+    },
   },
 ];
 
