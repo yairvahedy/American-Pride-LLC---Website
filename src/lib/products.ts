@@ -221,6 +221,16 @@ const AVAILABILITY_CYCLE: Availability[] = [
   "low-stock",
 ];
 
+// Real product photography attached to specific placeholder slugs. As real
+// products are added, this is superseded by entries in `products`.
+const PLACEHOLDER_IMAGES: Record<string, ProductImage[]> = {
+  "hangers-covers-sample-1": [
+    { src: "/images/products/hanger-white.jpg", alt: "White contour garment hanger with a gold hook" },
+    { src: "/images/products/hanger-tan.jpg", alt: "Tan contour garment hanger with a gold hook" },
+    { src: "/images/products/hanger-cream.jpg", alt: "Cream contour garment hanger with a gold hook" },
+  ],
+};
+
 /** Build deterministic placeholder products for a category. */
 export function getPlaceholderProducts(categorySlug: string): Product[] {
   const category = getCategoryBySlug(categorySlug);
@@ -230,13 +240,15 @@ export function getPlaceholderProducts(categorySlug: string): Product[] {
   return Array.from({ length: PLACEHOLDERS_PER_CATEGORY }, (_, i) => {
     const n = i + 1;
     const id = String(n).padStart(3, "0");
+    const slug = `${categorySlug}-sample-${n}`;
     return {
-      slug: `${categorySlug}-sample-${n}`,
+      slug,
       name: "Product Name",
       sku: `AP-${prefix}-${id}`,
       categorySlug,
       shortDescription:
         "Short product description will appear here once catalog data is added.",
+      images: PLACEHOLDER_IMAGES[slug],
       availability: AVAILABILITY_CYCLE[i % AVAILABILITY_CYCLE.length],
       pricing: { unit: "case", quoteOnly: true },
       keywords: [category.name],
